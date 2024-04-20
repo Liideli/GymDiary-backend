@@ -39,9 +39,17 @@ export default {
     ): Promise<
       MessageResponse & {token: string; user: UserWithoutPasswordRole}
     > => {
+      console.log('args', args);
       const user = await userModel.findOne({email: args.credentials.username});
       if (!user) {
         throw new Error('User not found');
+      }
+      const validPassword = await bcrypt.compare(
+        args.credentials.password,
+        user.password,
+      );
+      if (!validPassword) {
+        throw new Error('Invalid password');
       }
       return {message: 'Login successful', token: 'token', user};
     },
