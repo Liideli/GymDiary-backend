@@ -1,9 +1,19 @@
-import {User, UserWithoutPasswordRole} from '../../types/DBTypes';
+import {User, UserWithoutPasswordRole, Workout} from '../../types/DBTypes';
 import {MessageResponse} from '../../types/MessageTypes';
 import userModel from '../models/userModel';
 import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 
 export default {
+  Workout: {
+    owner: async (workout: Workout): Promise<UserWithoutPasswordRole> => {
+      const user = await userModel.findById(workout.owner);
+      if (!user) {
+        throw new Error('User not found');
+      }
+      return user;
+    },
+  },
   Query: {
     users: async (): Promise<User[]> => {
       return await userModel.find();
@@ -51,7 +61,12 @@ export default {
       if (!validPassword) {
         throw new Error('Invalid password');
       }
-      return {message: 'Login successful', token: 'token', user};
+      // generate a JWT with the user's data
+      const token = jwt.sign(
+        {id: user.id, email: user.email, user_name: user.user_name},
+        process.env.JWT_SECRET as string,
+      );
+      return {message: 'Login successful', token, user};
     },
     modifyUser: async (
       _parent: undefined,
