@@ -1,3 +1,4 @@
 import userResolver from './userResolver';
+import workoutResolver from './workoutResolver';
 
-export default [userResolver];
+export default [userResolver, workoutResolver];

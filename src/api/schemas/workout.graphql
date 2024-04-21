@@ -1,0 +1,32 @@
+scalar DateTime
+
+type Workout {
+  id: ID
+  title: String
+  description: String
+  date: DateTime
+  owner: User
+}
+
+type Query {
+  workouts: [Workout]
+  workout(id: ID!): Workout
+  workoutsByOwner(owner: ID!): [Workout]
+}
+
+input WorkoutInput {
+  title: String!
+  description: String!
+  date: DateTime!
+}
+
+type WorkoutMessage {
+  workout: Workout
+  message: String!
+}
+
+type Mutation {
+  createWorkout(input: WorkoutInput!): WorkoutMessage
+  modifyWorkout(id: ID!, input: WorkoutInput!): WorkoutMessage
+  deleteWorkout(id: ID!): WorkoutMessage
+}
