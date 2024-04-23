@@ -15,11 +15,11 @@ type Query {
 
 input ExerciseInput {
   name: String!
-  description: String!
+  description: String
   workout: ID!
-  sets: Int!
-  reps: Int!
-  weight: Float!
+  sets: Int
+  reps: Int
+  weight: Float
   duration: Int
 }
 
