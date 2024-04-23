@@ -6,6 +6,20 @@ import {UserWithoutPassword} from './types/DBTypes';
 import jwt from 'jsonwebtoken';
 import {MyContext} from './types/MyContext';
 
+const API_KEY = process.env.API_KEY;
+
+// Middleware function for API key authentication
+const apiKeyMiddleware = (req: Request, res: Response, next: NextFunction) => {
+  const apiKey = req.headers['x-api-key'];
+
+  // If the API key is not provided or is incorrect, send a 401 Unauthorized response
+  if (!apiKey || apiKey !== API_KEY) {
+    res.status(401).json({message: 'Invalid API key'});
+  } else {
+    next();
+  }
+};
+
 const notFound = (req: Request, _res: Response, next: NextFunction) => {
   const error = new CustomError(`🔍 - Not Found - ${req.originalUrl}`, 404);
   next(error);
@@ -62,4 +76,4 @@ const authenticate = async (
   }
 };
 
-export {notFound, errorHandler, authenticate};
+export {notFound, errorHandler, authenticate, apiKeyMiddleware};
