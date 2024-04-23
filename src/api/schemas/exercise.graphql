@@ -1,0 +1,35 @@
+type Exercise {
+  id: ID
+  name: String
+  description: String
+  workout: ID
+  sets: Int
+  reps: Int
+  weight: Float
+  duration: Int
+}
+
+type Query {
+  exercisesByWorkout(workout: ID!): [Exercise]
+}
+
+input ExerciseInput {
+  name: String!
+  description: String!
+  workout: ID!
+  sets: Int!
+  reps: Int!
+  weight: Float!
+  duration: Int
+}
+
+type ExerciseMessage {
+  exercise: Exercise
+  message: String!
+}
+
+type Mutation {
+  createExercise(input: ExerciseInput!): ExerciseMessage
+  modifyExercise(id: ID!, input: ExerciseInput!): ExerciseMessage
+  deleteExercise(id: ID!): ExerciseMessage
+}

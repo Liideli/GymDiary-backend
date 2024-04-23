@@ -20,4 +20,16 @@ type Workout = Partial<Document> & {
   owner: mongoose.Types.ObjectId;
 };
 
-export {User, UserWithoutPassword, UserWithoutPasswordRole, Workout};
+type Exercise = Partial<Document> & {
+  _id?: mongoose.Types.ObjectId;
+  id?: mongoose.Types.ObjectId;
+  name: string;
+  description: string;
+  workout: mongoose.Types.ObjectId;
+  sets: number;
+  reps: number;
+  weight: number;
+  duration: number;
+};
+
+export {User, UserWithoutPassword, UserWithoutPasswordRole, Workout, Exercise};

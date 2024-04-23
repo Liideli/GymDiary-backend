@@ -4,8 +4,6 @@ import {MyContext} from '../../types/MyContext';
 import workoutModel from '../models/workoutModel';
 import {GraphQLError} from 'graphql';
 
-console.log('workoutResolvers.ts called');
-
 export default {
   Query: {
     workouts: async (): Promise<Workout[]> => {
