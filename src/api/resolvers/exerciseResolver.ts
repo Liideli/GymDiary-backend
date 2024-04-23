@@ -1,5 +1,7 @@
+import {GraphQLError} from 'graphql';
 import {Exercise} from '../../types/DBTypes';
 import {MessageResponse} from '../../types/MessageTypes';
+import {MyContext} from '../../types/MyContext';
 import exerciseModel from '../models/exerciseModel';
 import workoutModel from '../models/workoutModel';
 
@@ -17,7 +19,15 @@ export default {
     createExercise: async (
       _parent: undefined,
       args: {input: Omit<Exercise, '_id'> & {workout: string}},
+      context: MyContext,
     ): Promise<MessageResponse & {exercise?: Exercise}> => {
+      if (!context.userdata) {
+        throw new GraphQLError('User not authenticated', {
+          extensions: {
+            code: 'UNAUTHORIZED',
+          },
+        });
+      }
       // validate the workout ID
       const workout = await workoutModel.findById(args.input.workout);
       if (!workout) {
