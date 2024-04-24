@@ -28,6 +28,7 @@ export default {
           },
         });
       }
+      args.input.owner = context.userdata.id;
       // validate the workout ID
       const workout = await workoutModel.findById(args.input.workout);
       if (!workout) {
@@ -39,6 +40,60 @@ export default {
       return {
         message: 'Exercise created successfully',
         exercise: newExercise,
+      };
+    },
+    modifyExercise: async (
+      _parent: undefined,
+      args: {input: Omit<Exercise, '_id'>; id: string},
+      context: MyContext,
+    ): Promise<{message: string; exercise?: Exercise}> => {
+      if (!context.userdata) {
+        throw new GraphQLError('User not authenticated', {
+          extensions: {
+            code: 'UNAUTHORIZED',
+          },
+        });
+      }
+      const filter = {
+        _id: args.id,
+        owner: context.userdata.id,
+      };
+      const updatedExercise = await exerciseModel.findOneAndUpdate(
+        filter,
+        args.input,
+        {new: true},
+      );
+      if (!updatedExercise) {
+        throw new Error('Error updating exercise');
+      }
+      return {
+        message: 'Exercise updated successfully',
+        exercise: updatedExercise,
+      };
+    },
+    deleteExercise: async (
+      _parent: undefined,
+      args: {id: string},
+      context: MyContext,
+    ): Promise<{message: string; exercise?: Exercise}> => {
+      if (!context.userdata) {
+        throw new GraphQLError('User not authenticated', {
+          extensions: {
+            code: 'UNAUTHORIZED',
+          },
+        });
+      }
+      const filter = {
+        _id: args.id,
+        owner: context.userdata.id,
+      };
+      const deletedExercise = await exerciseModel.findOneAndDelete(filter);
+      if (!deletedExercise) {
+        throw new Error('Error deleting exercise');
+      }
+      return {
+        message: 'Exercise deleted successfully',
+        exercise: deletedExercise,
       };
     },
   },

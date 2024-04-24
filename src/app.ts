@@ -37,7 +37,7 @@ const app = express();
     });
 
     await server.start();
-    app.use(apiKeyMiddleware);
+    //app.use(apiKeyMiddleware);
 
     app.use(
       '/graphql',

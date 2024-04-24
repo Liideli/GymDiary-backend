@@ -30,6 +30,11 @@ const exerciseModel = new mongoose.Schema<Exercise>({
     type: Number,
     min: [1, 'Duration must be greater than 0.'],
   },
+  owner: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: [true, 'Owner is required.'],
+  },
 });
 
 export default mongoose.model<Exercise>('Exercise', exerciseModel);

@@ -7,6 +7,7 @@ type Exercise {
   reps: Int
   weight: Float
   duration: Int
+  owner: ID
 }
 
 type Query {
@@ -23,6 +24,16 @@ input ExerciseInput {
   duration: Int
 }
 
+input ExerciseUpdateInput {
+  name: String
+  description: String
+  workout: ID
+  sets: Int
+  reps: Int
+  weight: Float
+  duration: Int
+}
+
 type ExerciseMessage {
   exercise: Exercise
   message: String!
@@ -30,6 +41,6 @@ type ExerciseMessage {
 
 type Mutation {
   createExercise(input: ExerciseInput!): ExerciseMessage
-  modifyExercise(id: ID!, input: ExerciseInput!): ExerciseMessage
+  modifyExercise(id: ID!, input: ExerciseUpdateInput!): ExerciseMessage
   deleteExercise(id: ID!): ExerciseMessage
 }

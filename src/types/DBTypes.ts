@@ -30,6 +30,7 @@ type Exercise = Partial<Document> & {
   reps: number;
   weight: number;
   duration: number;
+  owner: mongoose.Types.ObjectId;
 };
 
 export {User, UserWithoutPassword, UserWithoutPasswordRole, Workout, Exercise};
