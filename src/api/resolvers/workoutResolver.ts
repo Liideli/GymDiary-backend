@@ -48,36 +48,57 @@ export default {
     },
     modifyWorkout: async (
       _parent: undefined,
-      args: {
-        id: string;
-        title?: string;
-        description?: string;
-        date?: Date;
-      },
-    ): Promise<Workout> => {
-      const updatedWorkout = await workoutModel.findByIdAndUpdate(
-        args.id,
-        {
-          title: args.title,
-          description: args.description,
-          date: args.date,
-        },
+      args: {input: Omit<Workout, '_id'>; id: string},
+      context: MyContext,
+    ): Promise<{message: string; workout?: Workout}> => {
+      if (!context.userdata) {
+        throw new GraphQLError('User not authenticated', {
+          extensions: {
+            code: 'UNAUTHORIZED',
+          },
+        });
+      }
+      const filter = {
+        _id: args.id,
+        owner: context.userdata.id,
+      };
+      const updatedWorkout = await workoutModel.findOneAndUpdate(
+        filter,
+        args.input,
         {new: true},
       );
       if (!updatedWorkout) {
         throw new Error('Error updating workout');
       }
-      return updatedWorkout;
+      return {
+        message: 'Workout updated successfully',
+        workout: updatedWorkout,
+      };
     },
     deleteWorkout: async (
       _parent: undefined,
       args: {id: string},
-    ): Promise<MessageResponse> => {
-      const deletedWorkout = await workoutModel.findByIdAndDelete(args.id);
+      context: MyContext,
+    ): Promise<{message: string; workout?: Workout}> => {
+      if (!context.userdata) {
+        throw new GraphQLError('User not authenticated', {
+          extensions: {
+            code: 'UNAUTHORIZED',
+          },
+        });
+      }
+      const filter = {
+        _id: args.id,
+        owner: context.userdata.id,
+      };
+      const deletedWorkout = await workoutModel.findOneAndDelete(filter);
       if (!deletedWorkout) {
         throw new Error('Error deleting workout');
       }
-      return {message: 'Workout deleted'};
+      return {
+        message: 'Workout deleted successfully',
+        workout: deletedWorkout,
+      };
     },
   },
 };
