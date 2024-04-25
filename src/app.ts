@@ -2,12 +2,7 @@ require('dotenv').config();
 import express, {Request, Response} from 'express';
 import helmet from 'helmet';
 import cors from 'cors';
-import {
-  notFound,
-  errorHandler,
-  authenticate,
-  apiKeyMiddleware,
-} from './middlewares';
+import {notFound, errorHandler, authenticate} from './middlewares';
 import {MessageResponse} from './types/MessageTypes';
 import {ApolloServer} from '@apollo/server';
 import {expressMiddleware} from '@apollo/server/express4';

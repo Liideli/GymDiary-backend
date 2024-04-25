@@ -31,7 +31,6 @@ export default {
       _parent: undefined,
       args: {user: Omit<User, 'role'>},
     ): Promise<User> => {
-      console.log('args', args);
       const hashedPassword = await bcrypt.hash(args.user.password, 10);
       const newUser = await userModel.create({
         user_name: args.user.user_name,
@@ -49,7 +48,6 @@ export default {
     ): Promise<
       MessageResponse & {token: string; user: UserWithoutPasswordRole}
     > => {
-      console.log('args', args);
       const user = await userModel.findOne({email: args.credentials.username});
       if (!user) {
         throw new Error('User not found');
