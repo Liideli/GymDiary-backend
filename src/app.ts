@@ -1,9 +1,8 @@
 require('dotenv').config();
-import express, {Request, Response} from 'express';
+import express from 'express';
 import helmet from 'helmet';
 import cors from 'cors';
 import {notFound, errorHandler, authenticate} from './middlewares';
-import {MessageResponse} from './types/MessageTypes';
 import {ApolloServer} from '@apollo/server';
 import {expressMiddleware} from '@apollo/server/express4';
 import typeDefs from './api/schemas/index';
@@ -12,33 +11,52 @@ import {
   ApolloServerPluginLandingPageLocalDefault,
   ApolloServerPluginLandingPageProductionDefault,
 } from '@apollo/server/plugin/landingPage/default';
+import {shield} from 'graphql-shield';
+import {createRateLimitRule} from 'graphql-rate-limit';
+import {makeExecutableSchema} from '@graphql-tools/schema';
+import {constraintDirectiveTypeDefs} from 'graphql-constraint-directive';
+import {MyContext} from './types/MyContext';
+import {applyMiddleware} from 'graphql-middleware';
 
 const app = express();
 
+app.use(
+  helmet({
+    crossOriginEmbedderPolicy: false,
+    contentSecurityPolicy: false,
+  }),
+);
+
 (async () => {
   try {
-    app.use(
-      helmet({
-        crossOriginEmbedderPolicy: false,
-        contentSecurityPolicy: false,
-      }),
-    );
-    app.use(cors());
-
-    app.get('/', (_req: Request, res: Response<MessageResponse>) => {
-      res.send({message: 'Server is running'});
+    const rateLimitRule = createRateLimitRule({
+      identifyContext: (ctx) => {
+        return ctx.userdata?._id ? ctx.userdata._id : ctx.id;
+      },
     });
 
-    const server = new ApolloServer({
-      typeDefs,
+    const permissions = shield({
+      Mutation: {
+        login: rateLimitRule({max: 5, window: '10s'}),
+      },
+    });
+
+    const executableSchema = makeExecutableSchema({
+      typeDefs: [constraintDirectiveTypeDefs, typeDefs],
       resolvers,
+    });
+
+    const schema = applyMiddleware(executableSchema, permissions);
+
+    const server = new ApolloServer<MyContext>({
+      schema,
+      introspection: true,
       plugins: [
-        process.env.ENVIRONMENT === 'production'
+        process.env.NODE_ENV === 'production'
           ? ApolloServerPluginLandingPageProductionDefault({
-              graphRef: 'my-graph-id@my-graph-variant',
-              footer: false,
+              embed: true as false,
             })
-          : ApolloServerPluginLandingPageLocalDefault({footer: false}),
+          : ApolloServerPluginLandingPageLocalDefault(),
       ],
       includeStacktraceInErrorResponses: false,
     });
