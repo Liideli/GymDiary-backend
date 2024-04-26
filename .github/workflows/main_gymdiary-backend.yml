@@ -22,11 +22,10 @@ jobs:
           node-version: '18.x'
 
       - name: npm install, build, and test
-        env:
-            DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: |
           npm install
           npm run build --if-present
+          npm run test --if-present
 
       - name: Zip artifact for deployment
         run: zip release.zip ./* -r
@@ -54,13 +53,13 @@ jobs:
 
       - name: Unzip artifact for deployment
         run: unzip release.zip
-
+      
       - name: Login to Azure
         uses: azure/login@v1
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_F243616FAE484FE5817AAD183C3BF3F0 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_891B077CFC804D41BA56A16C348A09EE }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_EDB3EF4D2B4A43B4804EB22F896C72DF }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_39B7693B439C4EE9AB6E57092B40AAE5 }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_1DA568A613A8403AA2A338691CAE5021 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_970945707E624F8B924552CD56804CCF }}
 
       - name: 'Deploy to Azure Web App'
         id: deploy-to-webapp
@@ -69,3 +68,4 @@ jobs:
           app-name: 'gymdiary-backend'
           slot-name: 'Production'
           package: .
+          
