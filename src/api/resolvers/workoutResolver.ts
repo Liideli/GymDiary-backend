@@ -1,5 +1,4 @@
 import {Workout} from '../../types/DBTypes';
-import {MessageResponse} from '../../types/MessageTypes';
 import {MyContext} from '../../types/MyContext';
 import workoutModel from '../models/workoutModel';
 import {GraphQLError} from 'graphql';
