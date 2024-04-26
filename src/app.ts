@@ -9,6 +9,10 @@ import {expressMiddleware} from '@apollo/server/express4';
 import typeDefs from './api/schemas/index';
 import resolvers from './api/resolvers/index';
 import {MyContext} from './types/MyContext';
+import {
+  ApolloServerPluginLandingPageLocalDefault,
+  ApolloServerPluginLandingPageProductionDefault,
+} from '@apollo/server/plugin/landingPage/default';
 
 const app = express();
 
@@ -26,9 +30,18 @@ const app = express();
       res.send({message: 'Server is running'});
     });
 
-    const server = new ApolloServer<MyContext>({
+    const server = new ApolloServer({
       typeDefs,
       resolvers,
+      plugins: [
+        process.env.ENVIRONMENT === 'production'
+          ? ApolloServerPluginLandingPageProductionDefault({
+              graphRef: 'my-graph-id@my-graph-variant',
+              footer: false,
+            })
+          : ApolloServerPluginLandingPageLocalDefault({footer: false}),
+      ],
+      includeStacktraceInErrorResponses: false,
     });
 
     await server.start();
@@ -36,7 +49,7 @@ const app = express();
 
     app.use(
       '/graphql',
-      cors(),
+      cors<cors.CorsRequest>(),
       express.json(),
       authenticate,
       expressMiddleware(server, {
