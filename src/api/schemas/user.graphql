@@ -34,7 +34,7 @@ type LoginResponse {
 }
 
 input Credentials {
-  username: String
+  user_name: String
   password: String
 }
 

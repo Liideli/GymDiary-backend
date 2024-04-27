@@ -1,5 +1,12 @@
-import {User, UserWithoutPasswordRole, Workout} from '../../types/DBTypes';
-import {MessageResponse} from '../../types/MessageTypes';
+import {GraphQLError} from 'graphql';
+import {
+  User,
+  UserInput,
+  UserWithoutPasswordRole,
+  Workout,
+} from '../../types/DBTypes';
+import {MessageResponse, UserResponse} from '../../types/MessageTypes';
+import {MyContext} from '../../types/MyContext';
 import userModel from '../models/userModel';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
@@ -44,11 +51,11 @@ export default {
     },
     login: async (
       _parent: undefined,
-      args: {credentials: {username: string; password: string}},
+      args: {credentials: {user_name: string; password: string}},
     ): Promise<
       MessageResponse & {token: string; user: UserWithoutPasswordRole}
     > => {
-      const user = await userModel.findOne({email: args.credentials.username});
+      const user = await userModel.findOne({email: args.credentials.user_name});
       if (!user) {
         throw new Error('User not found');
       }
@@ -68,22 +75,25 @@ export default {
     },
     modifyUser: async (
       _parent: undefined,
-      args: {id: string; user_name?: string; email?: string},
-    ): Promise<User> => {
-      const updatedUser = await userModel.findByIdAndUpdate(
-        args.id,
-        {
-          user_name: args.user_name,
-          email: args.email,
-        },
-        {
-          new: true,
-        },
-      );
-      if (!updatedUser) {
-        throw new Error('User not found');
+      args: {user: UserInput},
+      context: MyContext,
+    ): Promise<UserResponse> => {
+      if (!context.userdata) {
+        throw new GraphQLError('User not authenticated', {
+          extensions: {code: 'UNAUTHENTICATED'},
+        });
       }
-      return updatedUser;
+      const hashedPassword = await bcrypt.hash(args.user.password, 10);
+      args.user.password = hashedPassword;
+      const filter = {_id: context.userdata.id};
+      const updatedUser = await userModel.findOneAndUpdate(filter, args.user, {
+        new: true,
+      });
+      console.log(updatedUser);
+      if (!updatedUser) {
+        throw new Error('Error updating user');
+      }
+      return {message: 'User updated successfully', user: updatedUser};
     },
     deleteUser: async (
       _parent: undefined,

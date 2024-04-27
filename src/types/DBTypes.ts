@@ -7,6 +7,10 @@ type User = Partial<Document> & {
   role: 'user' | 'admin';
 };
 
+type UserOutput = Omit<User, 'password' | 'role'>;
+
+type UserInput = Omit<User, 'id' | 'role'>;
+
 type UserWithoutPassword = Omit<User, 'password'>;
 
 type UserWithoutPasswordRole = Omit<UserWithoutPassword, 'role'>;
@@ -33,4 +37,12 @@ type Exercise = Partial<Document> & {
   owner: mongoose.Types.ObjectId;
 };
 
-export {User, UserWithoutPassword, UserWithoutPasswordRole, Workout, Exercise};
+export {
+  User,
+  UserOutput,
+  UserInput,
+  UserWithoutPassword,
+  UserWithoutPasswordRole,
+  Workout,
+  Exercise,
+};
