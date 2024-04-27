@@ -12,4 +12,9 @@ type UserResponse = MessageResponse & {
   user: UserOutput;
 };
 
-export {MessageResponse, ErrorResponse, UserResponse};
+type LoginResponse = MessageResponse & {
+  token: string;
+  user: UserOutput;
+};
+
+export {MessageResponse, ErrorResponse, UserResponse, LoginResponse};

@@ -12,6 +12,7 @@ type Query {
   workouts: [Workout]
   workout(id: ID!): Workout
   workoutsByOwner(owner: ID!): [Workout]
+  workoutBySearch(search: String!, owner: ID!): [Workout]
 }
 
 input WorkoutInput {

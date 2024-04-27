@@ -23,6 +23,20 @@ export default {
       }
       return workouts;
     },
+    workoutBySearch: async (
+      _parent: undefined,
+      args: {search: string; owner: string},
+    ) => {
+      const workouts = await workoutModel.find({
+        title: {$regex: args.search, $options: 'i'},
+        owner: args.owner,
+      });
+      console.log('workouts', workouts);
+      if (!workouts) {
+        throw new Error('Workouts not found');
+      }
+      return workouts;
+    },
   },
   Mutation: {
     createWorkout: async (

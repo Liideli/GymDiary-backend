@@ -5,7 +5,7 @@ import {
   UserWithoutPasswordRole,
   Workout,
 } from '../../types/DBTypes';
-import {MessageResponse, UserResponse} from '../../types/MessageTypes';
+import {LoginResponse, UserResponse} from '../../types/MessageTypes';
 import {MyContext} from '../../types/MyContext';
 import userModel from '../models/userModel';
 import bcrypt from 'bcrypt';
@@ -53,7 +53,7 @@ export default {
       _parent: undefined,
       args: {credentials: {user_name: string; password: string}},
     ): Promise<
-      MessageResponse & {token: string; user: UserWithoutPasswordRole}
+      LoginResponse & {token: string; user: UserWithoutPasswordRole}
     > => {
       const user = await userModel.findOne({email: args.credentials.user_name});
       if (!user) {
