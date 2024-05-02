@@ -10,6 +10,7 @@ import {MyContext} from '../../types/MyContext';
 import userModel from '../models/userModel';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import workoutModel from '../models/workoutModel';
 
 export default {
   Workout: {
@@ -23,7 +24,16 @@ export default {
   },
   Query: {
     users: async (): Promise<User[]> => {
-      return await userModel.find();
+      const users = await userModel.find().lean();
+      const usersWithWorkoutCount = await Promise.all(
+        users.map(async (user) => {
+          const workoutCount = await workoutModel.countDocuments({
+            owner: user._id,
+          });
+          return {...user, workoutCount};
+        }),
+      );
+      return usersWithWorkoutCount;
     },
     user: async (_parent: undefined, args: {id: string}) => {
       const user = await userModel.findById(args.id);
@@ -59,7 +69,7 @@ export default {
       if (!user) {
         throw new Error('User not found');
       }
-      const validPassword = await bcrypt.compare(
+      const validPassword = bcrypt.compareSync(
         args.credentials.password,
         user.password,
       );
