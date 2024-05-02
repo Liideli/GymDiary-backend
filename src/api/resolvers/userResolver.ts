@@ -30,9 +30,10 @@ export default {
           const workoutCount = await workoutModel.countDocuments({
             owner: user._id,
           });
-          return {...user, workoutCount};
+          return {...user, id: user._id.toString(), workoutCount};
         }),
       );
+      console.log(usersWithWorkoutCount);
       return usersWithWorkoutCount;
     },
     user: async (_parent: undefined, args: {id: string}) => {
