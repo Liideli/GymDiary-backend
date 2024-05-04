@@ -1,0 +1,33 @@
+type Group {
+  id: ID
+  name: String
+  description: String
+  owner: User
+  members: [User]
+}
+
+type Query {
+  groups: [Group]
+}
+
+input GroupInput {
+  name: String!
+  description: String
+}
+
+input GroupUpdateInput {
+  name: String
+  description: String
+  owner: ID
+}
+
+type GroupMessage {
+  group: Group
+  message: String!
+}
+
+type Mutation {
+  createGroup(input: GroupInput!): GroupMessage
+  modifyGroup(id: ID!, input: GroupUpdateInput!): GroupMessage
+  deleteGroup(id: ID!): GroupMessage
+}
