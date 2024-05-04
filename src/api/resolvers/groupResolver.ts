@@ -71,7 +71,7 @@ export default {
       _parent: undefined,
       args: {id: string},
       context: MyContext,
-    ): Promise<{message: string}> => {
+    ): Promise<{message: string; group?: Group | null}> => {
       console.log('args', args);
       if (!context.userdata) {
         throw new GraphQLError('User not authenticated', {
@@ -95,9 +95,13 @@ export default {
           },
         });
       }
+      const groupToDelete = await groupModel
+        .findById(args.id)
+        .populate('owner');
       await groupModel.findByIdAndDelete(args.id);
       return {
         message: 'Group deleted successfully',
+        group: groupToDelete,
       };
     },
   },
