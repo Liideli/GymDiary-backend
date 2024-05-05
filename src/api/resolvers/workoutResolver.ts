@@ -1,5 +1,6 @@
 import {Workout} from '../../types/DBTypes';
 import {MyContext} from '../../types/MyContext';
+import groupModel from '../models/groupModel';
 import workoutModel from '../models/workoutModel';
 import {GraphQLError} from 'graphql';
 
@@ -16,11 +17,33 @@ export default {
       }
       return workout;
     },
-    workoutsByOwner: async (_parent: undefined, args: {owner: string}) => {
-      const workouts = await workoutModel.find({owner: args.owner});
-      if (!workouts) {
-        throw new Error('Workouts not found');
+    workoutsByOwner: async (
+      _parent: undefined,
+      args: {owner: string},
+      context: MyContext,
+    ): Promise<Workout[]> => {
+      if (!context.userdata) {
+        throw new GraphQLError('User not authenticated');
       }
+
+      // Fetch the groups of the authenticated user
+      const userGroups = await groupModel.find({members: context.userdata.id});
+
+      // Fetch the groups of the owner
+      const ownerGroups = await groupModel.find({members: args.owner});
+
+      // Check if they have a group in common
+      const commonGroups = userGroups.filter((userGroup) =>
+        ownerGroups.some((ownerGroup) => ownerGroup.id === userGroup.id),
+      );
+
+      if (commonGroups.length === 0) {
+        throw new Error('User and owner are not in the same group');
+      }
+
+      // Fetch the workouts of the owner
+      const workouts = await workoutModel.find({owner: args.owner});
+
       return workouts;
     },
     workoutBySearch: async (
