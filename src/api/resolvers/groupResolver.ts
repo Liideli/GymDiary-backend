@@ -5,9 +5,17 @@ import {GraphQLError} from 'graphql';
 
 export default {
   Query: {
+    group: async (_parent: undefined, args: {id: string}) => {
+      const group = await groupModel
+        .findById(args.id)
+        .populate('owner members');
+      if (!group) {
+        throw new Error('Group not found');
+      }
+      return group;
+    },
     groups: async (): Promise<Group[]> => {
-      console.log('groups called');
-      return await groupModel.find().populate('owner');
+      return await groupModel.find().populate('owner members');
     },
   },
   Mutation: {
@@ -26,8 +34,11 @@ export default {
       }
       console.log('context.userdata', context.userdata);
       args.input.owner = context.userdata.id;
+      args.input.members = [context.userdata.id];
       const newGroup = await groupModel.create(args.input);
-      const populatedGroup = await groupModel.populate(newGroup, 'owner');
+      const populatedGroup = await groupModel.populate(newGroup, {
+        path: 'owner members',
+      });
       return {
         message: 'Group created successfully',
         group: populatedGroup,
@@ -97,7 +108,7 @@ export default {
       }
       const groupToDelete = await groupModel
         .findById(args.id)
-        .populate('owner');
+        .populate('owner members');
       await groupModel.findByIdAndDelete(args.id);
       return {
         message: 'Group deleted successfully',
