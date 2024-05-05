@@ -31,4 +31,6 @@ type Mutation {
   createGroup(input: GroupInput!): GroupMessage
   modifyGroup(id: ID!, input: GroupUpdateInput!): GroupMessage
   deleteGroup(id: ID!): GroupMessage
+  joinGroup(id: ID!): GroupMessage
+
 }

@@ -115,5 +115,31 @@ export default {
         group: groupToDelete,
       };
     },
+    joinGroup: async (
+      _parent: undefined,
+      args: {id: string},
+      context: MyContext,
+    ): Promise<{message: string; group?: Group}> => {
+      if (!context.userdata) {
+        throw new GraphQLError('User not authenticated');
+      }
+      const group = await groupModel.findById(args.id);
+      if (!group) {
+        throw new Error('Group not found');
+      }
+
+      if (group.members.includes(context.userdata.id)) {
+        throw new Error('User is already a member of the group');
+      }
+
+      group.members.push(context.userdata.id);
+      await group.save();
+
+      const populatedGroup = await groupModel.populate(group, 'owner members');
+      return {
+        message: 'User joined the group successfully',
+        group: populatedGroup,
+      };
+    },
   },
 };
