@@ -48,6 +48,13 @@ type Group = Partial<Document> & {
   members: mongoose.Types.ObjectId[];
 };
 
+type Member = {
+  id: string;
+  user_name: string;
+  email: string;
+  workoutCount?: number;
+};
+
 export {
   User,
   UserOutput,
@@ -58,4 +65,5 @@ export {
   Workout,
   Exercise,
   Group,
+  Member,
 };
