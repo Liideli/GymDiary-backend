@@ -28,10 +28,7 @@ export default {
       }
       return group;
     },
-    groups: async (context: MyContext): Promise<Group[]> => {
-      if (!context.userdata) {
-        throw new GraphQLError('User not authenticated');
-      }
+    groups: async (): Promise<Group[]> => {
       return await groupModel.find().populate('owner members');
     },
   },
