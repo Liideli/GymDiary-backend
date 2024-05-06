@@ -6,9 +6,15 @@ import {GraphQLError} from 'graphql';
 
 export default {
   Query: {
-    workouts: async (): Promise<Workout[]> => {
-      console.log('workouts called');
-      return await workoutModel.find();
+    workoutsByUser: async (
+      _parent: undefined,
+      args: {owner: string},
+      context: MyContext,
+    ): Promise<Workout[]> => {
+      if (!context.userdata) {
+        throw new GraphQLError('User not authenticated');
+      }
+      return await workoutModel.find({owner: args.owner});
     },
     workout: async (_parent: undefined, args: {id: string}) => {
       const workout = await workoutModel.findById(args.id);
