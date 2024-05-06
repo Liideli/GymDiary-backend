@@ -1,5 +1,6 @@
 import {GraphQLError} from 'graphql';
 import {
+  LoginUser,
   User,
   UserInput,
   UserWithoutPasswordRole,
@@ -62,26 +63,25 @@ export default {
     login: async (
       _parent: undefined,
       args: {credentials: {user_name: string; password: string}},
-    ): Promise<
-      LoginResponse & {token: string; user: UserWithoutPasswordRole}
-    > => {
+    ): Promise<LoginResponse & {token: string; user: LoginUser}> => {
       const user = await userModel.findOne({email: args.credentials.user_name});
       if (!user) {
-        throw new Error('User not found');
+        throw new GraphQLError('User not found');
       }
       const validPassword = bcrypt.compareSync(
         args.credentials.password,
         user.password,
       );
       if (!validPassword) {
-        throw new Error('Invalid password');
+        throw new GraphQLError('Invalid username and/or password');
+      } else {
+        // generate a JWT with the user's data
+        const token = jwt.sign(
+          {id: user.id, email: user.email, user_name: user.user_name},
+          process.env.JWT_SECRET as string,
+        );
+        return {message: 'Login successful', token, user};
       }
-      // generate a JWT with the user's data
-      const token = jwt.sign(
-        {id: user.id, email: user.email, user_name: user.user_name},
-        process.env.JWT_SECRET as string,
-      );
-      return {message: 'Login successful', token, user};
     },
     modifyUser: async (
       _parent: undefined,

@@ -17,6 +17,8 @@ type UserWithoutPasswordRole = Omit<UserWithoutPassword, 'role'>;
 
 type UserTest = Partial<User>;
 
+type LoginUser = Omit<User, 'password'>;
+
 type Workout = Partial<Document> & {
   _id?: mongoose.Types.ObjectId;
   id?: mongoose.Types.ObjectId;
@@ -62,6 +64,7 @@ export {
   UserWithoutPassword,
   UserWithoutPasswordRole,
   UserTest,
+  LoginUser,
   Workout,
   Exercise,
   Group,

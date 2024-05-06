@@ -6,7 +6,14 @@ import workoutModel from '../models/workoutModel';
 
 export default {
   Query: {
-    group: async (_parent: undefined, args: {id: string}) => {
+    group: async (
+      _parent: undefined,
+      args: {id: string},
+      context: MyContext,
+    ) => {
+      if (!context.userdata) {
+        throw new GraphQLError('User not authenticated');
+      }
       const group = await groupModel
         .findById(args.id)
         .populate('owner members');
@@ -21,7 +28,10 @@ export default {
       }
       return group;
     },
-    groups: async (): Promise<Group[]> => {
+    groups: async (context: MyContext): Promise<Group[]> => {
+      if (!context.userdata) {
+        throw new GraphQLError('User not authenticated');
+      }
       return await groupModel.find().populate('owner members');
     },
   },

@@ -28,15 +28,15 @@ export default {
 
       // Fetch the groups of the authenticated user
       const userGroups = await groupModel.find({members: context.userdata.id});
-
+      console.log('userGroups', userGroups);
       // Fetch the groups of the owner
       const ownerGroups = await groupModel.find({members: args.owner});
-
+      console.log('ownerGroups', ownerGroups);
       // Check if they have a group in common
       const commonGroups = userGroups.filter((userGroup) =>
         ownerGroups.some((ownerGroup) => ownerGroup.id === userGroup.id),
       );
-
+      console.log('commonGroups', commonGroups);
       if (commonGroups.length === 0) {
         throw new Error('User and owner are not in the same group');
       }
