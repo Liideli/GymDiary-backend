@@ -9,7 +9,7 @@ type Workout {
 }
 
 type Query {
-  workoutsByUser(user: ID!): [Workout]
+  workoutsByUser(owner: ID!): [Workout]
   workout(id: ID!): Workout
   workoutsByOwner(owner: ID!): [Workout]
   workoutBySearch(search: String!, owner: ID!): [Workout]
