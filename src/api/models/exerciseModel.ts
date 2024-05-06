@@ -16,19 +16,19 @@ const exerciseModel = new mongoose.Schema<Exercise>({
   },
   sets: {
     type: Number,
-    min: [1, 'Sets must be greater than 0.'],
+    min: [0, 'Sets must be greater than 0.'],
   },
   reps: {
     type: Number,
-    min: [1, 'Reps must be greater than 0.'],
+    min: [0, 'Reps must be greater than 0.'],
   },
   weight: {
     type: Number,
-    min: [1, 'Weight must be greater than 0.'],
+    min: [0, 'Weight must be greater than 0.'],
   },
   duration: {
     type: Number,
-    min: [1, 'Duration must be greater than 0.'],
+    min: [0, 'Duration must be greater than 0.'],
   },
   owner: {
     type: mongoose.Schema.Types.ObjectId,
