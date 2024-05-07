@@ -1,5 +1,6 @@
 import {Workout} from '../../types/DBTypes';
 import {MyContext} from '../../types/MyContext';
+import exerciseModel from '../models/exerciseModel';
 import groupModel from '../models/groupModel';
 import workoutModel from '../models/workoutModel';
 import {GraphQLError} from 'graphql';
@@ -134,6 +135,8 @@ export default {
       if (!deletedWorkout) {
         throw new Error('Error deleting workout');
       }
+      // Delete all exercises associated with the workout
+      await exerciseModel.deleteMany({workout: args.id});
       return {
         message: 'Workout deleted successfully',
         workout: deletedWorkout,
