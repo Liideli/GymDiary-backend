@@ -1,6 +1,6 @@
 # GymDiary Backend
 
-Welcome to GymDiary Backend! This repository contains the backend server implementation for GymDiary, a comprehensive fitness tracking application. GymDiary Backend is built using Node.js and GraphQL, providing a powerful and flexible platform for handling user authentication, workout logging, exercise logging, and more.
+Welcome to GymDiary Backend! This repository contains the backend server implementation for GymDiary, a comprehensive fitness tracking application. GymDiary Backend is built using Node.js and GraphQL, providing a powerful and flexible platform for handling user authentication, workout logging, exercise logging, groups and more.
 
 ## Technologies Used
 
@@ -18,6 +18,10 @@ To get started with GymDiary Backend, follow these steps:
 1. Clone this repository to your local machine.
 2. Install dependencies by running `npm install`.
 3. Set up your MongoDB database and configure connection settings in the `.env` file.
+  - NODE_ENV=
+  - PORT=
+  - DATABASE_URL=
+  - JWT_SECRET=
 4. Run the development server with `npm run dev`.
 
 ## License
