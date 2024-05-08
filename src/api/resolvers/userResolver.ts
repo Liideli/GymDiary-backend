@@ -45,10 +45,7 @@ export default {
     },
   },
   Mutation: {
-    register: async (
-      _parent: undefined,
-      args: {user: Omit<User, 'role'>},
-    ): Promise<User> => {
+    register: async (_parent: undefined, args: {user: Omit<User, 'role'>}) => {
       const hashedPassword = await bcrypt.hash(args.user.password, 10);
       const newUser = await userModel.create({
         user_name: args.user.user_name,
@@ -58,7 +55,7 @@ export default {
       if (!newUser) {
         throw new Error('Error creating user');
       }
-      return newUser;
+      return {user: newUser};
     },
     login: async (
       _parent: undefined,
