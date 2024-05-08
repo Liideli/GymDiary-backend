@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 import app from '../src/app';
 import {getUsers, loginUser, registerUser} from './userTests';
 import randomstring from 'randomstring';
-import {UserTest, ExerciseTest, Workout} from '../src/types/DBTypes';
+import {UserTest, ExerciseTest, Workout, GroupTest} from '../src/types/DBTypes';
 import {
   workoutsByUser,
   workout,
@@ -18,6 +18,7 @@ import {
   modifyExercise,
   deletedExercise,
 } from './exerciseTests';
+import {group, groups, createGroup, deleteGroup, joinGroup} from './groupTests';
 
 describe('Testing graphql api', () => {
   beforeAll(async () => {
@@ -32,6 +33,11 @@ describe('Testing graphql api', () => {
     user_name: 'Testuser ' + randomstring.generate(7),
     email: randomstring.generate(6) + '@mail.com',
     password: 'testpassword',
+  };
+
+  const testGroup: GroupTest = {
+    name: 'Testgroup' + randomstring.generate(7),
+    description: 'Testgroup description',
   };
 
   // test get all users
@@ -151,5 +157,30 @@ describe('Testing graphql api', () => {
     )) as Array<ExerciseTest>;
     const exercise = await deletedExercise(app, exercises[0].id);
     expect(exercise).toBeInstanceOf(Object);
+  });
+
+  it('should return groups', async () => {
+    const getGroups = await groups(app);
+    expect(getGroups).toBeInstanceOf(Array);
+  });
+
+  it('should return group by id', async () => {
+    const getGroup = await group(app, '1');
+    expect(getGroup).toBeInstanceOf(Object);
+  });
+
+  it('should create a group', async () => {
+    const group = await createGroup(app, testGroup);
+    expect(group).toBeInstanceOf(Object);
+  });
+
+  it('should delete a group', async () => {
+    const group = await deleteGroup(app, '1');
+    expect(group).toBeInstanceOf(Object);
+  });
+
+  it('should join a group', async () => {
+    const group = await joinGroup(app, '1');
+    expect(group).toBeInstanceOf(Object);
   });
 });
