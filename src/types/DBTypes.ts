@@ -43,6 +43,8 @@ type Exercise = Partial<Document> & {
   owner: mongoose.Types.ObjectId;
 };
 
+type ExerciseTest = Partial<Exercise>;
+
 type Group = Partial<Document> & {
   _id?: mongoose.Types.ObjectId;
   id?: mongoose.Types.ObjectId;
@@ -70,6 +72,7 @@ export {
   Workout,
   WorkoutTest,
   Exercise,
+  ExerciseTest,
   Group,
   Member,
 };

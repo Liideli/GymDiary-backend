@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 import app from '../src/app';
 import {getUsers, loginUser, registerUser} from './userTests';
 import randomstring from 'randomstring';
-import {UserTest, Workout} from '../src/types/DBTypes';
+import {UserTest, ExerciseTest, Workout} from '../src/types/DBTypes';
 import {
   workoutsByUser,
   workout,
@@ -12,6 +12,12 @@ import {
   modifyWorkout,
   deletedWorkout,
 } from './workoutTests';
+import {
+  exercisesByWorkout,
+  createExercise,
+  modifyExercise,
+  deletedExercise,
+} from './exerciseTests';
 
 describe('Testing graphql api', () => {
   beforeAll(async () => {
@@ -98,5 +104,52 @@ describe('Testing graphql api', () => {
     const user = users[0];
     const workout = await deletedWorkout(app, user.id);
     expect(workout).toBeInstanceOf(Object);
+  });
+
+  it('should return exercises by workout', async () => {
+    const users = await getUsers(app);
+    const user = users[0];
+    const workouts = (await workoutsByUser(app, user.id)) as Array<Workout>;
+    const singleWorkout = workouts[0];
+    const exercises = (await exercisesByWorkout(
+      app,
+      singleWorkout.id,
+    )) as Array<ExerciseTest>;
+    expect(exercises).toBeInstanceOf(Array);
+  });
+
+  it('should create an exercise', async () => {
+    const users = await getUsers(app);
+    const user = users[0];
+    const workouts = (await workoutsByUser(app, user.id)) as Array<Workout>;
+    const singleWorkout = workouts[0];
+    const exercise = await createExercise(app, singleWorkout.id);
+    expect(exercise).toBeInstanceOf(Object);
+  });
+
+  it('should modify an exercise', async () => {
+    const users = await getUsers(app);
+    const user = users[0];
+    const workouts = (await workoutsByUser(app, user.id)) as Array<Workout>;
+    const singleWorkout = workouts[0];
+    const exercises = (await exercisesByWorkout(
+      app,
+      singleWorkout.id,
+    )) as Array<ExerciseTest>;
+    const exercise = await modifyExercise(app, exercises[0].id);
+    expect(exercise).toBeInstanceOf(Object);
+  });
+
+  it('should delete an exercise', async () => {
+    const users = await getUsers(app);
+    const user = users[0];
+    const workouts = (await workoutsByUser(app, user.id)) as Array<Workout>;
+    const singleWorkout = workouts[0];
+    const exercises = (await exercisesByWorkout(
+      app,
+      singleWorkout.id,
+    )) as Array<ExerciseTest>;
+    const exercise = await deletedExercise(app, exercises[0].id);
+    expect(exercise).toBeInstanceOf(Object);
   });
 });
