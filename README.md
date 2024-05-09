@@ -18,10 +18,10 @@ To get started with GymDiary Backend, follow these steps:
 1. Clone this repository to your local machine.
 2. Install dependencies by running `npm install`.
 3. Set up your MongoDB database and configure connection settings in the `.env` file.
-  - NODE_ENV=
-  - PORT=
-  - DATABASE_URL=
-  - JWT_SECRET=
+  - NODE_ENV=development
+  - PORT=3000
+  - DATABASE_URL="your mongodb url"
+  - JWT_SECRET="your jwt secret"
 4. Run the development server with `npm run dev`.
 
 ## License
