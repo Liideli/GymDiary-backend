@@ -105,12 +105,18 @@ export default {
     deleteUser: async (
       _parent: undefined,
       args: {id: string},
-    ): Promise<User> => {
+      context: MyContext,
+    ): Promise<{user: User}> => {
+      if (!context.userdata) {
+        throw new GraphQLError('User not authenticated', {
+          extensions: {code: 'UNAUTHENTICATED'},
+        });
+      }
       const deletedUser = await userModel.findByIdAndDelete(args.id);
       if (!deletedUser) {
         throw new Error('User not found');
       }
-      return deletedUser;
+      return {user: deletedUser};
     },
   },
 };
